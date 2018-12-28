@@ -117,7 +117,7 @@ import { ${uniq(importedTypes).join(', ')} } from './${apiTypesFilename}';
 import { GraphQlQuery, IGraphQlQueryExecutor, ${hasDataField ? 'GraphQlQueryItemInput,' : ''} IDataMapper } from 'graphql-client-ts';
 
 export class ${upperAction}Api<T> extends GraphQlQuery<T, ${upperAction}Methods> {
-    constructor(executor: IGraphQlQueryExecutor<${upperAction}Methods>) {
+    constructor(executor: IGraphQlQueryExecutor) {
         super(executor, '${action}');
     }
     ${methods.join('\n\n')}
