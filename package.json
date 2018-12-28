@@ -1,0 +1,53 @@
+{
+  "name": "graphql-client-ts",
+  "version": "0.0.1",
+  "description": "graphql-client-ts",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "scripts": {
+    "pretest": "npm run clean && npm run tsc",
+    "test": "ava --no-cache --verbose lib/**/*.test.js",
+    "posttest": "npm run clean-test-code",
+    "tsc": "tsc",
+    "tscw": "tsc -w",
+    "preversion": "npm run tsc",
+    "postversion": "git push --follow-tags",
+    "prepublishOnly": "npm run tsc && npm run clean-test-code",
+    "clean": "rimraf ./lib",
+    "clean-test-code": "rimraf ./lib/**/*.test.js && rimraf ./lib/**/*.test.d.ts"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "bin": {
+    "graphql-client": "./bin/graphql-client"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mitica/graphql-client-ts.git"
+  },
+  "keywords": [
+    "graphql-client",
+    "api-client"
+  ],
+  "author": "Dumitru Cantea",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mitica/graphql-client-ts/issues"
+  },
+  "homepage": "https://github.com/mitica/graphql-client-ts#readme",
+  "devDependencies": {
+    "@types/commander": "^2.12.2",
+    "@types/lru-cache": "^4.1.1",
+    "@types/node": "10.12.7",
+    "ava": "^0.25.0",
+    "commander": "^2.19.0",
+    "debug": "^4.1.0",
+    "rimraf": "^2.6.2",
+    "typescript": "3.1.6"
+  },
+  "dependencies": {
+    "cross-fetch": "^3.0.0",
+    "lru-cache": "^5.1.1"
+  }
+}

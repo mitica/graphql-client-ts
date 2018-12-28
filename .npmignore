@@ -1,0 +1,7 @@
+
+*.test.js
+lib/scripts/*.ts
+types/scripts/
+src/
+tsconfig.json
+.travis.yml
