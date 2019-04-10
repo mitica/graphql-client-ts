@@ -1,4 +1,4 @@
-import { SchemaData, TypeData, getJsTypeName, typeIsRequired, generateTypeScriptType, getTypeName } from "./schema";
+import { SchemaData, TypeData, getJsTypeName, typeIsRequired, generateTypeScriptType, getTypeName, generateEnumScript } from "./schema";
 import { FileGenerator } from "./generator";
 
 export class TypesGenerator extends FileGenerator {
@@ -13,6 +13,7 @@ export class TypesGenerator extends FileGenerator {
             .filter(type => this.schemaData.typeIsObject(type));
 
         const types = typeNames.map(name => this.schemaData.getTypeByName(name.name));
+        // console.log(types)
 
         let data = types
             .map(item => ({
@@ -22,6 +23,15 @@ export class TypesGenerator extends FileGenerator {
             .map(item => `export type ${item.name} = ${generateTypeScriptType(item.fields)}`);
 
         data = data.concat(types.map(type => `export const ${type.name}StringFields = '${this.getTypeStringFields(type)}';`));
+
+        const enumNames = (<any[]>schema.data.__schema.types).map<TypeData>((t: any) => this.schemaData.getTypeByName(t.name))
+            .filter(type => this.schemaData.typeIsEnum(type));
+
+        const enumTypes = enumNames.map(name => this.schemaData.getTypeByName(name.name));
+
+        const enums = enumTypes.map(item => `export enum ${item.name} ${generateEnumScript(item.enumValues)}`);
+
+        data = data.concat(enums);
 
         return data.join('\n\n');
     }
@@ -39,7 +49,7 @@ export class TypesGenerator extends FileGenerator {
                     parent[fieldKey]++;
                     return `${field.name} { ${this.getTypeStringFields(fieldsType, parent)} }`;
                 } else {
-                    // console.log(`no object: ${field.name} ${fieldsType.name}, ${JSON.stringify(parent)}`)
+                    console.log(`no object: ${field.name} ${fieldsType.name}, ${JSON.stringify(parent)}`)
                     // return field.name;
                 }
             } else {

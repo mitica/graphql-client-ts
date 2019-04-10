@@ -12,6 +12,18 @@ export class SchemaData {
     }
 
     typeIsObject(type: TypeData) {
+        return this.isOfType(type, ['OBJECT', 'INPUT_OBJECT']);
+    }
+
+    typeIsObjectOrEnum(type: TypeData) {
+        return this.isOfType(type, ['OBJECT', 'INPUT_OBJECT', 'ENUM']);
+    }
+
+    typeIsEnum(type: TypeData) {
+        return this.isOfType(type, ['ENUM']);
+    }
+
+    isOfType(type: TypeData, types: string[]) {
         const schema = this.schema;
 
         const invalidNames: string[] = [schema.data.__schema['queryType'].name];
@@ -20,7 +32,7 @@ export class SchemaData {
         }
         const name = getTypeName(type);
         const kind = getTypeKind(type);
-        return name.indexOf('__') !== 0 && invalidNames.indexOf(name) < 0 && ['OBJECT', 'INPUT_OBJECT'].indexOf(kind) > -1;
+        return name.indexOf('__') !== 0 && invalidNames.indexOf(name) < 0 && types.indexOf(kind) > -1;
     }
 
     static async create(url: string, headers?: any) {
@@ -56,6 +68,10 @@ export function saveCodeFile(data: GeneratedInfo[], fileName: string) {
 
 export function generateTypeScriptType(items: { name: string, type: string, required: boolean }[]): string {
     return `{ ${items.map(item => `${item.name}${item.required ? '' : '?'}: ${item.type}`).join(', ')} } `;
+}
+
+export function generateEnumScript(items: { name: string }[]): string {
+    return `{ ${items.map(item => `${item.name}`).join(', ')} } `;
 }
 
 export function getJsTypeName(type: TypeData) {
@@ -117,6 +133,7 @@ export type TypeData = {
     name: string
     fields?: TypeFieldData[]
     inputFields?: TypeFieldData[]
+    enumValues?: TypeFieldData[]
     ofType?: TypeData
 }
 
