@@ -10,17 +10,17 @@ export type GraphQLQueryExecutorData = {
 export class GraphQlQueryExecutor implements IGraphQlQueryExecutor {
     constructor(private url: string, private headers: Index<string> = { 'Content-Type': 'application/json' }) { }
 
-    execute<T>(type: GraphQlQueryType, items: GraphQlQueryItems): Promise<GraphQlRequestResult<T>> {
+    execute<T>(type: GraphQlQueryType, items: GraphQlQueryItems, headers?: Index<string>): Promise<GraphQlRequestResult<T>> {
         // debug(`executing url ${this.url}`);
         const data = this.formatQueryData(type, items);
         // debug(`executing data ${JSON.stringify(data)}`);
-        return this.fetch(data);
+        return this.fetch(data, headers);
     }
 
-    protected async fetch(data: GraphQLQueryExecutorData) {
-        const response = await timeout(1000*3, fetch(this.url, {
+    protected async fetch(data: GraphQLQueryExecutorData, headers?: Index<string>) {
+        const response = await timeout(1000 * 3, fetch(this.url, {
             method: 'POST',
-            headers: this.headers,
+            headers: { ...this.headers, ...headers },
             body: JSON.stringify(data),
         }));
 

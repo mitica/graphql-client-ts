@@ -1,4 +1,5 @@
 import { GraphQlQueryItems, GraphQlQueryType, GraphQlQueryItem, GraphQlRequestResult, IGraphQlQueryExecutor } from "./graphql";
+import { Index } from "./utils";
 
 
 
@@ -17,8 +18,8 @@ export class GraphQlQuery<T extends {}, TName extends string> {
         return this;
     }
 
-    async queryExecute(): Promise<GraphQlRequestResult<T>> {
-        const result = await this.executor.execute<T>(this.type, this.items);
+    async queryExecute(headers?: Index<string>): Promise<GraphQlRequestResult<T>> {
+        const result = await this.executor.execute<T>(this.type, this.items, headers);
         const keys = Object.keys(this.items);
         for (let key of keys) {
             if (this.items[key].mapper) {

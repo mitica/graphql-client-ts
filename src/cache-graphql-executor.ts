@@ -21,9 +21,9 @@ export class CacheGraphQlQueryExecutor extends GraphQlQueryExecutor {
         }
     }
 
-    async execute<T>(type: GraphQlQueryType, items: GraphQlQueryItems): Promise<GraphQlRequestResult<T>> {
+    async execute<T>(type: GraphQlQueryType, items: GraphQlQueryItems, headers?: Index<string>): Promise<GraphQlRequestResult<T>> {
         if (type !== 'query') {
-            return super.execute<T>(type, items);
+            return super.execute<T>(type, items, headers);
         }
         const result: GraphQlRequestResult<T> = { data: {} as T };
         const nonCacheItems: GraphQlQueryItems = {}
@@ -50,7 +50,7 @@ export class CacheGraphQlQueryExecutor extends GraphQlQueryExecutor {
             return result;
         }
 
-        const remoteResult = await super.execute<T>(type, nonCacheItems);
+        const remoteResult = await super.execute<T>(type, nonCacheItems, headers);
 
         if (remoteResult.data) {
             this.setCacheData(remoteResult.data, nonCacheItems);
