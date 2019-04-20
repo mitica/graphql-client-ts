@@ -1,4 +1,4 @@
-import { GraphQlQueryExecutor } from "./graphql-executor";
+import { GraphQlQueryExecutor, GraphQlQueryExecutorOptions } from "./graphql-executor";
 import { Index } from "./utils";
 import * as LRU from 'lru-cache';
 import { GraphQlQueryType, GraphQlQueryItems, GraphQlRequestResult, GraphQlQueryItem } from "./graphql";
@@ -14,10 +14,10 @@ export type CacheGraphQlQueryExecutorOptions = {
 
 export class CacheGraphQlQueryExecutor extends GraphQlQueryExecutor {
     private storage: { [key: string]: LRU.Cache<string, any> } = {}
-    constructor({ url, headers }: { url: string, headers?: Index<string> }, options: CacheGraphQlQueryExecutorOptions) {
-        super(url, headers);
-        for (let key of Object.keys(options)) {
-            this.storage[key] = new LRU({ max: options[key].max, maxAge: options[key].ttl });
+    constructor({ url, options }: { url: string, options?: GraphQlQueryExecutorOptions }, cacheOptions: CacheGraphQlQueryExecutorOptions) {
+        super(url, options);
+        for (let key of Object.keys(cacheOptions)) {
+            this.storage[key] = new LRU({ max: cacheOptions[key].max, maxAge: cacheOptions[key].ttl });
         }
     }
 
@@ -82,6 +82,6 @@ export class CacheGraphQlQueryExecutor extends GraphQlQueryExecutor {
     }
 
     private createItemKey(item: GraphQlQueryItem<string>) {
-        return item.name + '#' + (item.variables ? JSON.stringify(item.variables.map(item=>item.value)) : '') + '#' + item.fields || '';
+        return item.name + '#' + (item.variables ? JSON.stringify(item.variables.map(item => item.value)) : '') + '#' + item.fields || '';
     }
 }

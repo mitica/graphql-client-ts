@@ -7,8 +7,13 @@ export type GraphQLQueryExecutorData = {
     variables: Index<any>
 }
 
+export interface GraphQlQueryExecutorOptions {
+    headers?: Index<string>
+    requestHeaders?: () => Index<string>
+}
+
 export class GraphQlQueryExecutor implements IGraphQlQueryExecutor {
-    constructor(private url: string, private headers: Index<string> = { 'Content-Type': 'application/json' }) { }
+    constructor(private url: string, private options: GraphQlQueryExecutorOptions = {}) { }
 
     execute<T>(type: GraphQlQueryType, items: GraphQlQueryItems, headers?: Index<string>): Promise<GraphQlRequestResult<T>> {
         // debug(`executing url ${this.url}`);
@@ -18,9 +23,11 @@ export class GraphQlQueryExecutor implements IGraphQlQueryExecutor {
     }
 
     protected async fetch(data: GraphQLQueryExecutorData, headers?: Index<string>) {
+        const rHeaders = this.options.requestHeaders && this.options.requestHeaders() || {};
+        const allHeaders = { ...this.options.headers, ...rHeaders, ...headers };
         const response = await timeout(1000 * 3, fetch(this.url, {
             method: 'POST',
-            headers: { ...this.headers, ...headers },
+            headers: allHeaders,
             body: JSON.stringify(data),
         }));
 
