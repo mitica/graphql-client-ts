@@ -5,6 +5,7 @@ node_modules
 *.log
 *.tgz
 lib
+es6
 types
 package-lock.json
 temp/
