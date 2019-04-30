@@ -1,6 +1,6 @@
 import { Index, timeout } from "./utils";
 import { GraphQlRequestResult, GraphQlQueryType, GraphQlQueryItems, IGraphQlQueryExecutor } from "./graphql";
-import fetch from 'cross-fetch';
+import fetch from 'isomorphic-unfetch';
 
 export type GraphQLQueryExecutorData = {
     query: string
@@ -32,7 +32,7 @@ export class GraphQlQueryExecutor implements IGraphQlQueryExecutor {
         }));
 
         if (response.status >= 400) {
-            throw new Error("Bad response from server");
+            throw new Error(`Bad response from server: ${response.status}`);
         }
 
         return await response.json();
