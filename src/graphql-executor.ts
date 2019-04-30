@@ -42,7 +42,9 @@ export class GraphQlQueryExecutor implements IGraphQlQueryExecutor {
                     variables[v.varName.substr(1)] = v.value;
                     varCount++;
                 });
-                body += '(' + item.variables.map(v => v.name + ':' + v.varName).join(', ') + ')';
+                if (varCount > 0) {
+                    body += '(' + item.variables.map(v => v.name + ':' + v.varName).join(', ') + ')';
+                }
             }
             if (item.fields) {
                 body += '{' + item.fields + '}';
