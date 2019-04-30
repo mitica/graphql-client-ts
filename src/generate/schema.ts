@@ -1,6 +1,6 @@
 import { writeFileSync } from "fs";
 import { join } from "path";
-import fetch from 'isomorphic-unfetch';
+import fetch from '../fetch';
 import { parse } from "url";
 
 export class SchemaData {

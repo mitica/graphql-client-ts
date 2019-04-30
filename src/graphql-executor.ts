@@ -1,6 +1,6 @@
 import { Index, timeout } from "./utils";
 import { GraphQlRequestResult, GraphQlQueryType, GraphQlQueryItems, IGraphQlQueryExecutor } from "./graphql";
-import fetch from 'isomorphic-unfetch';
+import fetch from './fetch';
 
 export type GraphQLQueryExecutorData = {
     query: string
