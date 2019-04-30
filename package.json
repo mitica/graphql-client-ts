@@ -1,6 +1,6 @@
 {
   "name": "graphql-client-ts",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "graphql-client-ts",
   "main": "./lib/index.js",
   "module": "./es6/index.js",
