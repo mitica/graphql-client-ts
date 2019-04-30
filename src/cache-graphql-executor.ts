@@ -1,5 +1,4 @@
-import { GraphQlQueryExecutor, GraphQlQueryExecutorOptions } from "./graphql-executor";
-import { Index } from "./utils";
+import { GraphQlQueryExecutor, IGraphQlQueryExecutorRequest } from "./graphql-executor";
 import * as LRU from 'lru-cache';
 import { GraphQlQueryType, GraphQlQueryItems, GraphQlRequestResult, GraphQlQueryItem } from "./graphql";
 
@@ -14,16 +13,16 @@ export type CacheGraphQlQueryExecutorOptions = {
 
 export class CacheGraphQlQueryExecutor extends GraphQlQueryExecutor {
     private storage: { [key: string]: LRU.Cache<string, any> } = {}
-    constructor({ url, options }: { url: string, options?: GraphQlQueryExecutorOptions }, cacheOptions: CacheGraphQlQueryExecutorOptions) {
-        super(url, options);
+    constructor(request: IGraphQlQueryExecutorRequest, cacheOptions: CacheGraphQlQueryExecutorOptions) {
+        super(request);
         for (let key of Object.keys(cacheOptions)) {
             this.storage[key] = new LRU({ max: cacheOptions[key].max, maxAge: cacheOptions[key].ttl });
         }
     }
 
-    async execute<T>(type: GraphQlQueryType, items: GraphQlQueryItems, headers?: Index<string>): Promise<GraphQlRequestResult<T>> {
+    async execute<T>(type: GraphQlQueryType, items: GraphQlQueryItems): Promise<GraphQlRequestResult<T>> {
         if (type !== 'query') {
-            return super.execute<T>(type, items, headers);
+            return super.execute<T>(type, items);
         }
         const result: GraphQlRequestResult<T> = { data: {} as T };
         const nonCacheItems: GraphQlQueryItems = {}
@@ -50,7 +49,7 @@ export class CacheGraphQlQueryExecutor extends GraphQlQueryExecutor {
             return result;
         }
 
-        const remoteResult = await super.execute<T>(type, nonCacheItems, headers);
+        const remoteResult = await super.execute<T>(type, nonCacheItems);
 
         if (remoteResult.data) {
             this.setCacheData(remoteResult.data, nonCacheItems);

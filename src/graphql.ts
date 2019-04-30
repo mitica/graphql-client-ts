@@ -1,5 +1,3 @@
-import { Index } from "./utils";
-
 export interface IDataMapper<R=any, V=any> {
     (value: V): R
 }
@@ -24,5 +22,5 @@ export type GraphQlQueryType = 'query' | 'mutation';
 export interface GraphQlQueryItems<TName extends string=string> { [index: string]: GraphQlQueryItem<TName> }
 
 export interface IGraphQlQueryExecutor {
-    execute<T>(type: GraphQlQueryType, items: GraphQlQueryItems, headers?: Index<string>): Promise<GraphQlRequestResult<T>>
+    execute<T>(type: GraphQlQueryType, items: GraphQlQueryItems): Promise<GraphQlRequestResult<T>>
 }

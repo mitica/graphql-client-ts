@@ -96,7 +96,7 @@ function generateApi(action: ActionType, schemaData: SchemaData, apiTypesFilenam
             return `{ name: '${arg.name}', value: args.${arg.name}, type: '${typeName}' }`;
         });
 
-        const methodBody = `return this.queryAddItem(key,
+        const methodBody = `return this._client.queryAddItem(key,
             {
                 ${resultIsObject ? 'fields: data.fields,' : ''}
                 name: ${upperAction}Methods.${field.name},
@@ -114,11 +114,18 @@ function generateApi(action: ActionType, schemaData: SchemaData, apiTypesFilenam
 
     const data = `
 import { ${uniq(importedTypes).join(', ')} } from './${apiTypesFilename}';
-import { GraphQlQuery, IGraphQlQueryExecutor, ${hasDataField ? 'GraphQlQueryItemInput,' : ''} IDataMapper } from 'graphql-client-ts';
+import { Index, GraphQlRequestResult, GraphQlQuery, IGraphQlQueryExecutor, ${hasDataField ? 'GraphQlQueryItemInput,' : ''} IDataMapper } from 'graphql-client-ts';
 
-export class ${upperAction}Api<T> extends GraphQlQuery<T, ${upperAction}Methods> {
+export class ${upperAction}Api<T> {
+    protected _client: GraphQlQuery<T, ${upperAction}Methods>;
     constructor(executor: IGraphQlQueryExecutor) {
-        super(executor, '${action}');
+        this._client = new GraphQlQuery<T, ${upperAction}Methods>(executor, '${action}');
+    }
+    queryHasItems() {
+        return this._client.queryHasItems();
+    }
+    async queryExecute(headers?: Index<string>): Promise<GraphQlRequestResult<T>> {
+        return this._client.queryExecute(headers);
     }
     ${methods.join('\n\n')}
 }

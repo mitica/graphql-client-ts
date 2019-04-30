@@ -1,41 +1,29 @@
 import { Index, timeout } from "./utils";
 import { GraphQlRequestResult, GraphQlQueryType, GraphQlQueryItems, IGraphQlQueryExecutor } from "./graphql";
-import fetch from './fetch';
 
 export type GraphQLQueryExecutorData = {
     query: string
     variables: Index<any>
 }
 
-export interface GraphQlQueryExecutorOptions {
-    headers?: Index<string>
-    requestHeaders?: () => Index<string>
+export interface IGraphQlQueryExecutorRequest {
+    (data: string): Promise<any>
 }
 
 export class GraphQlQueryExecutor implements IGraphQlQueryExecutor {
-    constructor(private url: string, private options: GraphQlQueryExecutorOptions = {}) { }
+    constructor(private request: IGraphQlQueryExecutorRequest) { }
 
-    execute<T>(type: GraphQlQueryType, items: GraphQlQueryItems, headers?: Index<string>): Promise<GraphQlRequestResult<T>> {
+    execute<T>(type: GraphQlQueryType, items: GraphQlQueryItems): Promise<GraphQlRequestResult<T>> {
         // debug(`executing url ${this.url}`);
         const data = this.formatQueryData(type, items);
         // debug(`executing data ${JSON.stringify(data)}`);
-        return this.fetch(data, headers);
+        return this.fetch(data);
     }
 
-    protected async fetch(data: GraphQLQueryExecutorData, headers?: Index<string>) {
-        const rHeaders = this.options.requestHeaders && this.options.requestHeaders() || {};
-        const allHeaders = { ...this.options.headers, ...rHeaders, ...headers };
-        const response = await timeout(1000 * 3, fetch(this.url, {
-            method: 'POST',
-            headers: allHeaders,
-            body: JSON.stringify(data),
-        }));
+    protected async fetch(data: GraphQLQueryExecutorData) {
+        const response = await timeout(1000 * 3, this.request(JSON.stringify(data)));
 
-        if (response.status >= 400) {
-            throw new Error(`Bad response from server: ${response.status}`);
-        }
-
-        return await response.json();
+        return response;
     }
 
     protected formatQueryData(type: GraphQlQueryType, items: GraphQlQueryItems): GraphQLQueryExecutorData {
