@@ -1,12 +1,16 @@
 import { FileGenerator } from "./generator";
 
 export class ClientGenerator extends FileGenerator {
-    constructor(file: string, private queryApiFilename: string, private mutationApiFilename: string) {
-        super(file);
-    }
+  constructor(
+    file: string,
+    private queryApiFilename: string,
+    private mutationApiFilename: string
+  ) {
+    super(file);
+  }
 
-    protected async getContent(): Promise<string> {
-        const code = `
+  protected async getContent(): Promise<string> {
+    const code = `
 import { QueryApi } from './${this.queryApiFilename}';
 import { MutationApi } from './${this.mutationApiFilename}';
 import { IGraphQlQueryExecutor } from 'graphql-client-ts';
@@ -24,7 +28,6 @@ export class GraphQLClient {
     }
 }`;
 
-        return code;
-    }
-
+    return code;
+  }
 }
