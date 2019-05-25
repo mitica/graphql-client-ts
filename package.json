@@ -1,6 +1,6 @@
 {
   "name": "graphql-client-ts",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "graphql-client-ts",
   "main": "./lib/index.js",
   "module": "./es6/index.js",
@@ -13,9 +13,9 @@
     "tsc": "tsc",
     "tsc-es6": "tsc --project tsconfig.es6.json",
     "tscw": "tsc -w",
-    "preversion": "npm run tsc",
+    "preversion": "npm run build",
     "postversion": "git push --follow-tags",
-    "prepublishOnly": "npm run tsc && npm run clean-test-code",
+    "prepublishOnly": "npm run build && npm run clean-test-code",
     "clean": "rimraf ./lib",
     "clean-test-code": "rimraf ./lib/**/*.test.js && rimraf ./lib/**/*.test.d.ts"
   },

@@ -1,6 +1,6 @@
 import { writeFileSync } from "fs";
 import { join } from "path";
-import got from "got";
+import got = require('got');
 import { parse } from "url";
 
 export class SchemaData {
