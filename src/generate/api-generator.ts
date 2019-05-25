@@ -29,7 +29,7 @@ export class ApiGenerator extends FileGenerator {
         : this.generateQueryMethods();
     const api = this.generateApi(this.type);
 
-    return [methods.data, api.data].join("\n\n");
+    return [api.data, methods.data].join("\n\n");
   }
 
   protected generateMutationMethods(): GeneratedInfo {
@@ -154,7 +154,7 @@ function generateApi(
 
   const data = `
 import { ${uniq(importedTypes).join(", ")} } from './${apiTypesFilename}';
-import { Index, GraphQlRequestResult, GraphQlQuery, IGraphQlQueryExecutor, ${
+import { GraphQlRequestResult, GraphQlQuery, IGraphQlQueryExecutor, ${
     hasDataField ? "GraphQlQueryItemInput," : ""
   } IDataMapper } from 'graphql-client-ts';
 
@@ -166,8 +166,8 @@ export class ${upperAction}Api<T> {
     queryHasItems() {
         return this._client.queryHasItems();
     }
-    async queryExecute(headers?: Index<string>): Promise<GraphQlRequestResult<T>> {
-        return this._client.queryExecute(headers);
+    async queryExecute(): Promise<GraphQlRequestResult<T>> {
+        return this._client.queryExecute();
     }
     ${methods.join("\n\n")}
 }
