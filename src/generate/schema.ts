@@ -90,7 +90,7 @@ export function generateTypeScriptType(
 }
 
 export function generateEnumScript(items: { name: string }[]): string {
-  return `{ ${items.map(item => `${item.name}`).join(", ")} } `;
+  return `{ ${items.map(item => `${item.name} = "${item.name}"`).join(", ")} } `;
 }
 
 export function getJsTypeName(type: TypeData) {
