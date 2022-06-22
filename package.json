@@ -51,7 +51,7 @@
   },
   "dependencies": {
     "commander": "^2.19.0",
-    "got": "^9.6.0",
+    "got": "^11.8.5",
     "lru-cache": "^5.1.1"
   }
 }
